@@ -1,11 +1,8 @@
 export const paths = {
-  orders: "/",
-  orderProducts: "/orders/products",
-  materials: "/materials",
-  products: "/products",
-  profile: "/profile",
+  home: "/",
+  partners: "/partners",
+  dashboard: "/dashboard",
   signIn: "/sign-in",
   signUp: "/sign-up",
   admin: "/admin",
-  adminMaterialRequests: "/admin/material-requests",
 };

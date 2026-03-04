@@ -1,8 +1,9 @@
-import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+type ApiErrorLike = {
+  status?: number;
+  data?: unknown;
+};
 
-export function isFetchBaseQueryError(
-  error: unknown,
-): error is FetchBaseQueryError {
+export function isFetchBaseQueryError(error: unknown): error is ApiErrorLike {
   return typeof error === "object" && error !== null && "status" in error;
 }
 
@@ -14,6 +15,6 @@ export function isApiErrorWithMessage(
     typeof error.data === "object" &&
     error.data !== null &&
     "message" in error.data &&
-    typeof error.data.message === "string"
+    typeof (error.data as { message?: unknown }).message === "string"
   );
 }
