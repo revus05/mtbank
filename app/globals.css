@@ -79,6 +79,13 @@
   --sidebar-border: #e5e7eb;
   --sidebar-ring: #1b74fd;
   --radius: 0.875rem;
+
+  --mtbank-gradient: linear-gradient(
+    90deg,
+    #3908fa 34.5%,
+    #8115ae 66.5%,
+    #ff2b2b 100%
+  );
 }
 
 @layer base {

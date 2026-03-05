@@ -9,10 +9,12 @@ import {
   LogOut,
   ShieldCheck,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ComponentType } from "react";
 import { Button } from "shared/ui/button";
+import logo from "../../../public/logo.svg";
 
 type HeaderRole = "admin" | "partner" | null;
 
@@ -108,9 +110,7 @@ export function SiteHeader({ role }: { role: HeaderRole }) {
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-3 py-2 md:px-6">
         <Link href="/" className="inline-flex items-center gap-2">
-          <span className="rounded-lg bg-primary px-2 py-1 text-xs font-semibold text-primary-foreground">
-            МТБ
-          </span>
+          <Image src={logo} alt="logo" className="h-5 w-fit" />
           <span className="hidden text-sm font-semibold sm:inline">
             Партнерская программа
           </span>

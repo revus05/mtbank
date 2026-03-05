@@ -4,7 +4,7 @@ import { Button } from "shared/ui/button";
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-border bg-gradient-to-r from-[#1b74fd] to-[#0f56c8] px-6 py-12 text-white md:px-10">
+    <section className="relative overflow-hidden rounded-3xl border border-border px-6 py-12 text-white md:px-10 [background:var(--mtbank-gradient)]">
       <div className="absolute -top-20 -right-20 size-64 rounded-full bg-white/15 blur-3xl" />
       <div className="absolute -bottom-16 -left-10 size-52 rounded-full bg-white/20 blur-3xl" />
       <div className="relative z-10 max-w-2xl space-y-5">

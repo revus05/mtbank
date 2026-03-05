@@ -5,6 +5,8 @@ import { getSession } from "shared/lib/session";
 import { Toaster } from "shared/ui/sonner";
 import { SiteHeader } from "widgets/layout/site-header";
 import "./globals.css";
+import Image from "next/image";
+import logoFull from "../public/logo-full.svg";
 
 const roboto = Roboto({
   variable: "--font-roboto-sans",
@@ -33,11 +35,18 @@ export default async function RootLayout({
           <SiteHeader role={session?.role ?? null} />
           <div className="flex grow">{children}</div>
           <footer className="mt-10 border-t border-border bg-card">
-            <div className="mx-auto flex w-full max-w-6xl flex-col gap-1 px-4 py-6 text-sm text-muted-foreground md:px-6">
-              <p className="font-medium text-foreground">МТБанк</p>
-              <p>Контакт-центр: +375 (29) 509-99-99</p>
-              <p>Email: info@mtbank.by</p>
-              <p>Минск, Беларусь</p>
+            <div className="grid sm:grid-cols-2 grid-cols-1 items-center mx-auto w-full max-w-6xl px-4 py-6 text-sm text-muted-foreground md:px-6">
+              <Image
+                src={logoFull}
+                alt="logo"
+                className="sm:max-w-100 w-full"
+              />
+              <div className="flex flex-col gap-1">
+                <p className="font-medium text-foreground">МТБанк</p>
+                <p>Контакт-центр: +375 (29) 509-99-99</p>
+                <p>Email: info@mtbank.by</p>
+                <p>Минск, Беларусь</p>
+              </div>
             </div>
           </footer>
         </div>
