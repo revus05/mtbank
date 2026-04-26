@@ -40,6 +40,7 @@ export function SubmitApplicationForm() {
     resolver: zodResolver(applicationFormSchema),
     defaultValues: {
       companyName: "",
+      unp: "",
       email: "",
       phone: "",
       description: "",
@@ -53,6 +54,7 @@ export function SubmitApplicationForm() {
     try {
       const payload: ApplicationInput = {
         companyName: values.companyName,
+        unp: values.unp,
         email: values.email,
         phone: values.phone,
         description: values.description,
@@ -78,17 +80,38 @@ export function SubmitApplicationForm() {
         <form className="space-y-4" onSubmit={onSubmit}>
           <div className="space-y-2">
             <Label htmlFor="companyName">Название компании</Label>
-            <Input id="companyName" {...register("companyName")} />
+            <Input
+              id="companyName"
+              placeholder="ООО «Название компании»"
+              {...register("companyName")}
+            />
             {errors.companyName ? (
               <p className="text-sm text-destructive">
                 {errors.companyName.message}
               </p>
             ) : null}
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="unp">УНП</Label>
+            <Input
+              id="unp"
+              placeholder="123456789"
+              maxLength={9}
+              {...register("unp")}
+            />
+            {errors.unp ? (
+              <p className="text-sm text-destructive">{errors.unp.message}</p>
+            ) : null}
+          </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" {...register("email")} />
+              <Input
+                id="email"
+                type="email"
+                placeholder="company@example.by"
+                {...register("email")}
+              />
               {errors.email ? (
                 <p className="text-sm text-destructive">
                   {errors.email.message}

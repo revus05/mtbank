@@ -66,18 +66,26 @@ export function LoginForm() {
         <form className="space-y-4" onSubmit={onSubmit}>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" required />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="company@example.by"
+              required
+            />
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Пароль</Label>
-            <PasswordInput id="password" name="password" required />
+            <PasswordInput
+              id="password"
+              name="password"
+              placeholder="Введите пароль"
+              required
+            />
           </div>
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             Войти
           </Button>
-          <p className="text-xs text-muted-foreground">
-            Демо админ: admin@mtbank.by / admin12345
-          </p>
         </form>
       </CardContent>
     </Card>
