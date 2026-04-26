@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import type {
   Application,
   Partner,
@@ -11,6 +13,8 @@ type Database = {
   accounts: PartnerAccount[];
   promotions: Promotion[];
 };
+
+const DB_FILE_PATH = path.join(process.cwd(), ".mock-db.json");
 
 const seededApplications: Application[] = [
   {
@@ -78,19 +82,54 @@ const seededAccounts: PartnerAccount[] = [
   },
 ];
 
+function loadFromFile(): Database | null {
+  try {
+    if (fs.existsSync(DB_FILE_PATH)) {
+      const raw = fs.readFileSync(DB_FILE_PATH, "utf-8");
+      return JSON.parse(raw) as Database;
+    }
+  } catch {
+    // ignore read errors, will use seeded data
+  }
+  return null;
+}
+
+function saveToFile(data: Database) {
+  try {
+    fs.writeFileSync(DB_FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  } catch {
+    // ignore write errors in development
+  }
+}
+
 declare global {
   // eslint-disable-next-line no-var
   var __mtbankDb: Database | undefined;
 }
 
-const db: Database = globalThis.__mtbankDb ?? {
-  applications: seededApplications,
-  partners: seededPartners,
-  accounts: seededAccounts,
-  promotions: seededPromotions,
-};
+function getDb(): Database {
+  if (globalThis.__mtbankDb) {
+    return globalThis.__mtbankDb;
+  }
 
-globalThis.__mtbankDb = db;
+  const fromFile = loadFromFile();
+  if (fromFile) {
+    globalThis.__mtbankDb = fromFile;
+    return fromFile;
+  }
+
+  const seeded: Database = {
+    applications: seededApplications,
+    partners: seededPartners,
+    accounts: seededAccounts,
+    promotions: seededPromotions,
+  };
+  globalThis.__mtbankDb = seeded;
+  saveToFile(seeded);
+  return seeded;
+}
+
+const db = getDb();
 
 export function listApplications() {
   return [...db.applications].sort((a, b) =>
@@ -109,6 +148,7 @@ export function createApplication(
   };
 
   db.applications.push(item);
+  saveToFile(db);
   return item;
 }
 
@@ -155,6 +195,7 @@ export function updateApplicationStatus(
     }
   }
 
+  saveToFile(db);
   return app;
 }
 
@@ -184,6 +225,7 @@ export function createPromotion(payload: Omit<Promotion, "id" | "createdAt">) {
   };
 
   db.promotions.push(item);
+  saveToFile(db);
   return item;
 }
 
@@ -199,6 +241,7 @@ export function deletePromotion(id: string) {
   }
 
   db.promotions.splice(index, 1);
+  saveToFile(db);
   return true;
 }
 
