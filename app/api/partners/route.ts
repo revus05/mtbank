@@ -1,9 +1,13 @@
-import { listPartners } from "shared/api/mock-db";
+import { prisma } from "shared/lib/prisma";
 
 export async function GET() {
+  const partners = await prisma.partner.findMany({
+    orderBy: { companyName: "asc" },
+  });
+
   return Response.json({
     status: 200,
     message: "Partners fetched",
-    data: listPartners(),
+    data: partners,
   });
 }

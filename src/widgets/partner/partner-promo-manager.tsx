@@ -2,6 +2,7 @@
 
 import { PromoRow } from "entities/promotion/ui/promo-row";
 import { AddPromoDialog } from "features/manage-promotions/ui/add-promo-dialog";
+import { StatsDialog } from "features/manage-promotions/ui/stats-dialog";
 import { useCallback, useEffect, useState } from "react";
 import type { Promotion } from "shared/types";
 import {
@@ -40,7 +41,10 @@ export function PartnerPromoManager({ partnerId }: { partnerId: string }) {
     <section className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-xl font-semibold">Управление акциями</h2>
-        <AddPromoDialog partnerId={partnerId} onCreated={loadPromotions} />
+        <div className="flex gap-2">
+          <StatsDialog />
+          <AddPromoDialog partnerId={partnerId} onCreated={loadPromotions} />
+        </div>
       </div>
       <div className="overflow-x-auto rounded-2xl border border-border">
         <Table>

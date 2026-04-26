@@ -1,6 +1,6 @@
+import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
-import { validatePartnerAccount } from "shared/api/mock-db";
-import { ADMIN_CREDENTIALS } from "shared/lib/auth";
+import { prisma } from "shared/lib/prisma";
 import { SESSION_COOKIE_NAME, serializeSession } from "shared/lib/session";
 import { z } from "zod";
 
@@ -23,10 +23,11 @@ export async function POST(request: Request) {
   const { email, password } = parsed.data;
   const cookieStore = await cookies();
 
-  if (
-    email.toLowerCase() === ADMIN_CREDENTIALS.email &&
-    password === ADMIN_CREDENTIALS.password
-  ) {
+  const admin = await prisma.admin.findUnique({
+    where: { email: email.toLowerCase() },
+  });
+
+  if (admin && (await bcrypt.compare(password, admin.password))) {
     cookieStore.set(SESSION_COOKIE_NAME, serializeSession({ role: "admin" }), {
       httpOnly: true,
       sameSite: "lax",
@@ -41,9 +42,11 @@ export async function POST(request: Request) {
     });
   }
 
-  const account = validatePartnerAccount(email, password);
+  const account = await prisma.partnerAccount.findFirst({
+    where: { email: { equals: email, mode: "insensitive" } },
+  });
 
-  if (!account) {
+  if (!account || account.password !== password) {
     return Response.json(
       {
         status: 401,

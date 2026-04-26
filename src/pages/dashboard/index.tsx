@@ -1,8 +1,12 @@
-import { getPartnerById } from "shared/api/mock-db";
+import { prisma } from "shared/lib/prisma";
 import { PartnerPromoManager } from "widgets/partner/partner-promo-manager";
 
-export default function DashboardPage({ partnerId }: { partnerId: string }) {
-  const currentPartner = getPartnerById(partnerId);
+export default async function DashboardPage({
+  partnerId,
+}: { partnerId: string }) {
+  const currentPartner = await prisma.partner.findUnique({
+    where: { id: partnerId },
+  });
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 md:px-6">

@@ -1,5 +1,5 @@
 import { applicationSchema } from "entities/application/model/schema";
-import { createApplication, listApplications } from "shared/api/mock-db";
+import { prisma } from "shared/lib/prisma";
 import { getSession } from "shared/lib/session";
 
 export async function GET() {
@@ -12,10 +12,14 @@ export async function GET() {
     );
   }
 
+  const applications = await prisma.application.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+
   return Response.json({
     status: 200,
     message: "Applications fetched",
-    data: listApplications(),
+    data: applications,
   });
 }
 
@@ -34,7 +38,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const created = createApplication(parsed.data);
+  const created = await prisma.application.create({ data: parsed.data });
 
   return Response.json(
     {

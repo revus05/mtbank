@@ -1,4 +1,4 @@
-import { updateApplicationStatus } from "shared/api/mock-db";
+import { prisma } from "shared/lib/prisma";
 import { getSession } from "shared/lib/session";
 import { z } from "zod";
 
@@ -34,14 +34,48 @@ export async function PATCH(
     );
   }
 
-  const updated = updateApplicationStatus(id, parsed.data.status);
+  const app = await prisma.application.findUnique({ where: { id } });
 
-  if (!updated) {
+  if (!app) {
     return Response.json(
       { status: 404, message: "Application not found", data: null },
       { status: 404 },
     );
   }
+
+  const updated = await prisma.$transaction(async (tx) => {
+    const result = await tx.application.update({
+      where: { id },
+      data: { status: parsed.data.status },
+    });
+
+    if (parsed.data.status === "approved") {
+      const partner = await tx.partner.upsert({
+        where: { email: app.email },
+        create: {
+          companyName: app.companyName,
+          email: app.email,
+          phone: app.phone,
+          description: app.description,
+          approvedAt: new Date(),
+          loyaltyLevel: "silver",
+        },
+        update: {},
+      });
+
+      await tx.partnerAccount.upsert({
+        where: { email: app.email },
+        create: {
+          partnerId: partner.id,
+          email: app.email,
+          password: app.password,
+        },
+        update: {},
+      });
+    }
+
+    return result;
+  });
 
   return Response.json({
     status: 200,

@@ -1,10 +1,5 @@
 import { promotionSchema } from "entities/promotion/model/schema";
-import {
-  createPromotion,
-  deletePromotion,
-  getPromotionById,
-  listPromotions,
-} from "shared/api/mock-db";
+import { prisma } from "shared/lib/prisma";
 import { getSession } from "shared/lib/session";
 
 export async function GET(request: Request) {
@@ -27,10 +22,15 @@ export async function GET(request: Request) {
     );
   }
 
+  const promotions = await prisma.promotion.findMany({
+    where: { partnerId },
+    orderBy: { createdAt: "desc" },
+  });
+
   return Response.json({
     status: 200,
     message: "Promotions fetched",
-    data: listPromotions(partnerId),
+    data: promotions,
   });
 }
 
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const created = createPromotion(parsed.data);
+  const created = await prisma.promotion.create({ data: parsed.data });
 
   return Response.json(
     {
@@ -96,7 +96,7 @@ export async function DELETE(request: Request) {
     );
   }
 
-  const promo = getPromotionById(id);
+  const promo = await prisma.promotion.findUnique({ where: { id } });
 
   if (!promo) {
     return Response.json(
@@ -112,14 +112,7 @@ export async function DELETE(request: Request) {
     );
   }
 
-  const deleted = deletePromotion(id);
-
-  if (!deleted) {
-    return Response.json(
-      { status: 404, message: "Promotion not found", data: null },
-      { status: 404 },
-    );
-  }
+  await prisma.promotion.delete({ where: { id } });
 
   return Response.json({
     status: 200,

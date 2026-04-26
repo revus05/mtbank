@@ -42,7 +42,7 @@ next-env.d.ts
 
 # ide
 .idea
-/src/generated/prisma
+/src/shared/lib/generated
 
 # mock database
 .mock-db.json
