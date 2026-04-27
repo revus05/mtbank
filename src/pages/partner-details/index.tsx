@@ -1,6 +1,8 @@
+import { DeletePartnerButton } from "features/manage-partners/ui/delete-partner-button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "shared/lib/prisma";
+import { getSession } from "shared/lib/session";
 import { Badge } from "shared/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "shared/ui/card";
 import {
@@ -19,9 +21,10 @@ const levels = {
 };
 
 export default async function PartnerDetailsPage({ id }: { id: string }) {
-  const [partner, promos] = await Promise.all([
+  const [partner, promos, session] = await Promise.all([
     prisma.partner.findUnique({ where: { id } }),
     prisma.promotion.findMany({ where: { partnerId: id }, orderBy: { createdAt: "desc" } }),
+    getSession(),
   ]);
 
   if (!partner) {
@@ -41,7 +44,16 @@ export default async function PartnerDetailsPage({ id }: { id: string }) {
               {partner.description}
             </p>
           </div>
-          <Badge variant="secondary">{levels[partner.loyaltyLevel]}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary">{levels[partner.loyaltyLevel]}</Badge>
+            {session?.role === "admin" && (
+              <DeletePartnerButton
+                partnerId={partner.id}
+                companyName={partner.companyName}
+                redirectTo="/partners"
+              />
+            )}
+          </div>
         </CardHeader>
         <CardContent className="grid gap-2 text-sm text-muted-foreground md:grid-cols-2">
           <p>Email: {partner.email}</p>

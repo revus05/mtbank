@@ -7,7 +7,9 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { DeletePartnerButton } from "features/manage-partners/ui/delete-partner-button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { Partner } from "shared/types";
 import { Badge } from "shared/ui/badge";
@@ -27,8 +29,15 @@ const levels: Record<Partner["loyaltyLevel"], string> = {
   platinum: "Platinum",
 };
 
-export function PartnerCatalogTable({ partners }: { partners: Partner[] }) {
+export function PartnerCatalogTable({
+  partners,
+  isAdmin = false,
+}: {
+  partners: Partner[];
+  isAdmin?: boolean;
+}) {
   const [filter, setFilter] = useState("");
+  const router = useRouter();
 
   const columns = useMemo<ColumnDef<Partner>[]>(
     () => [
@@ -45,16 +54,25 @@ export function PartnerCatalogTable({ partners }: { partners: Partner[] }) {
         id: "details",
         header: "",
         cell: ({ row }) => (
-          <Link
-            href={`/partners/${row.original.id}`}
-            className="font-medium text-primary hover:underline"
-          >
-            Подробнее
-          </Link>
+          <div className="flex items-center justify-end gap-6">
+            <Link
+              href={`/partners/${row.original.id}`}
+              className="font-medium text-primary hover:underline"
+            >
+              Подробнее
+            </Link>
+            {isAdmin && (
+              <DeletePartnerButton
+                partnerId={row.original.id}
+                companyName={row.original.companyName}
+                onDeleted={() => router.refresh()}
+              />
+            )}
+          </div>
         ),
       },
     ],
-    [],
+    [isAdmin, router],
   );
 
   const table = useReactTable({
