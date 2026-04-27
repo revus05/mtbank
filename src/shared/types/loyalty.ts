@@ -8,7 +8,7 @@ export interface Application {
   description: string;
   password: string;
   status: ApplicationStatus;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface Partner {
@@ -17,7 +17,7 @@ export interface Partner {
   email: string;
   phone: string;
   description: string;
-  approvedAt: string;
+  approvedAt: Date;
   loyaltyLevel: "silver" | "gold" | "platinum";
 }
 
@@ -27,7 +27,7 @@ export interface Promotion {
   serviceName: string;
   discount: string;
   description: string;
-  createdAt: string;
+  createdAt: Date;
 }
 
 export interface PartnerAccount {

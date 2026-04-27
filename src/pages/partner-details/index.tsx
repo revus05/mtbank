@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPartnerById, listPromotions } from "shared/api/mock-db";
+import { prisma } from "shared/lib/prisma";
 import { Badge } from "shared/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "shared/ui/card";
 import {
@@ -18,14 +18,15 @@ const levels = {
   platinum: "Platinum",
 };
 
-export default function PartnerDetailsPage({ id }: { id: string }) {
-  const partner = getPartnerById(id);
+export default async function PartnerDetailsPage({ id }: { id: string }) {
+  const [partner, promos] = await Promise.all([
+    prisma.partner.findUnique({ where: { id } }),
+    prisma.promotion.findMany({ where: { partnerId: id }, orderBy: { createdAt: "desc" } }),
+  ]);
 
   if (!partner) {
     notFound();
   }
-
-  const promos = listPromotions(id);
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-8 md:px-6">

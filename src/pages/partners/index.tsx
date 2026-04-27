@@ -1,8 +1,10 @@
-import { listPartners } from "shared/api/mock-db";
+import { prisma } from "shared/lib/prisma";
 import { PartnerCatalogTable } from "widgets/public/partner-catalog-table";
 
-export default function PartnersPage() {
-  const partners = listPartners();
+export default async function PartnersPage() {
+  const partners = await prisma.partner.findMany({
+    orderBy: { companyName: "asc" },
+  });
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8 md:px-6">
