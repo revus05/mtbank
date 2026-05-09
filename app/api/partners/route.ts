@@ -33,7 +33,12 @@ export async function DELETE(request: Request) {
     );
   }
 
-  await prisma.partner.delete({ where: { id } });
+  const partner = await prisma.partner.findUnique({ where: { id }, select: { email: true } });
+
+  await prisma.$transaction([
+    prisma.application.deleteMany({ where: { email: partner?.email } }),
+    prisma.partner.delete({ where: { id } }),
+  ]);
 
   return Response.json({ status: 200, message: "Partner deleted", data: null });
 }
